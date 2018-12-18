@@ -2,6 +2,8 @@
 
 namespace api\Controllers\Categories;
 
+use api\Responses\JsonResponse;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -13,10 +15,13 @@ use Psr\Http\Message\ResponseInterface;
  */
 
 class Categories{
-    public function __invoke(RequestInterface $request, ResponseInterface $response)
-    {
-        $response->getBody()->write(json_encode(['success' => true]));
+    protected $container;
 
-        return $response;
+    public function __construct(ContainerInterface $container) {
+        $this->container = $container;
+    }
+
+    public function all(RequestInterface $request, ResponseInterface $response){
+        $response = JsonResponse::make($response, []);
     }
 }
