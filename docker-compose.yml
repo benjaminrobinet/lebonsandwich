@@ -49,6 +49,22 @@ services:
       - lbs_network
     links :
       - mysql:db
+  api.commandes:
+    image: canals/php:latest
+    environment:
+      - VHOST_HOSTNAME=api.commandes.local
+      - VHOST_DOCROOT=/var/www/api
+    ports:
+      - "10090:80"
+      - "10453:443"
+    volumes:
+      - ./catalogue/api_commandes:/var/www/api
+      - ./catalogue/src:/var/www/src
+    working_dir: /var/www/src
+    networks:
+      - lbs_network
+    links:
+      - mysql_commandes:db
 
 #############################
 # mysql catalogue  + adminer
@@ -66,6 +82,19 @@ services:
       - lbs_network
     volumes :
       - ./sql:/var/sql
+  mysql_commandes:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=commandes_lbs
+      - MYSQL_USER=commandes_lbs
+      - MYSQL_PASSWORD=commandes_lbs
+      - MYSQL_DATABASE=commandes_lbs
+    ports:
+      - "3604:3306"
+    networks:
+      - lbs_network
+    volumes :
+      - ./sql:/var/sql
 
   adminer:
      image: adminer
@@ -75,6 +104,7 @@ services:
        - lbs_network
      links:
        - mysql:db
+       - mysql_commandes:db_commandes
 
 
 
