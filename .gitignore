@@ -108,3 +108,5 @@ composer.phar
 /doc/api.doc/docs/
 .idea/inspectionProfiles/
 doc/internals/
+
+docker-compose\.yml
