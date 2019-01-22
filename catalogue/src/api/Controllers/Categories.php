@@ -1,6 +1,6 @@
 <?php
 
-namespace api\Controllers\Categories;
+namespace api\Controllers;
 
 use api\Responses\JsonResponse;
 use Psr\Container\ContainerInterface;
@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
  * Time: 08:50
  */
 
-class Sand2Cat{
+class Categories{
     protected $container;
 
     public function __construct(ContainerInterface $container) {
@@ -22,6 +22,8 @@ class Sand2Cat{
     }
 
     public function all(RequestInterface $request, ResponseInterface $response){
-        $response = JsonResponse::make($response, []);
+    	$cat = api\Models\Categories::get();
+
+        $response = JsonResponse::make($response, $cat);
     }
 }

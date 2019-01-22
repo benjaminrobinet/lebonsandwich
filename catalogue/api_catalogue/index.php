@@ -4,7 +4,6 @@ use api\Responses;
 use api\Errors;
 use Slim\App;
 use Slim\Container;
-use scripts\Database;
 
 require_once('../src/vendor/autoload.php');
 
@@ -22,7 +21,7 @@ $app = new App($c);
 
 // JSON API Routes definitions
 $app->group('', function(){ // Only for group logic to add a middleware (https://www.slimframework.com/docs/v3/objects/router.html#route-groups)
-    $this->get('/categories', Controllers\Categories\Categories::class . ':all');
+    $this->get('/categories', api\Controllers\Categories::class . ':all');
 })->add(Responses\JsonHeaders::class);
 
 // Run app
