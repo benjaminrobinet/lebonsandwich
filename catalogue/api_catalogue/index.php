@@ -13,8 +13,8 @@ $configuration = ['settings' => [
     'production' => false ]
 ];
 
-$db_conf = parse_ini_file("configuration.ini", true);
-Database::init($db_conf['database']);
+$conf = parse_ini_file("configuration.ini", true);
+Database::init($conf['database']);
 
 $c = new Container($configuration);
 Errors\JsonErrorsDispatcher::dispatch($c);
