@@ -2,6 +2,7 @@
 use api\Controllers;
 use api\Responses;
 use api\Errors;
+use scripts\Database;
 use Slim\App;
 use Slim\Container;
 
