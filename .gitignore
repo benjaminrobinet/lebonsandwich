@@ -110,3 +110,6 @@ composer.phar
 doc/internals/
 
 docker-compose\.yml
+
+/catalogue/src/vendor
+/commande/src/vendor

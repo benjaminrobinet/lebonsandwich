@@ -1,12 +1,14 @@
 {
 
   "require" : {
-    "slim/slim": "^3.0"
+    "slim/slim": "^3.0",
+    "illuminate/database": "^5.7"
   },
 
   "autoload": {
     "psr-4": {
-      "api\\": "./api/"
+      "api\\": "./api/",
+      "scripts\\": "./scripts/"
     }
   }
 }
