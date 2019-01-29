@@ -32,4 +32,9 @@ class Categories{
     	$cat = \api\Models\Categories::where("id", $args['id'])->get();
         $response = JsonResponse::make($response, $cat);
     }
+
+    public function add(RequestInterface $request, ResponseInterface $response, $body){
+        var_dump($body);
+        die();
+    }
 }

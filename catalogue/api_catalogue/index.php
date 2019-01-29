@@ -24,6 +24,7 @@ $app = new App($c);
 $app->group('', function(){ // Only for group logic to add a middleware (https://www.slimframework.com/docs/v3/objects/router.html#route-groups)
     $this->get('/categories', api\Controllers\Categories::class . ":all");
     $this->get('/categorie/{id}', api\Controllers\Categories::class . ":single");
+    $this->post('/categorie', api\Controllers\Categories::class . ":add");
 })->add(Responses\JsonHeaders::class);
 
 // Run app
