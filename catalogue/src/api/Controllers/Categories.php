@@ -22,8 +22,14 @@ class Categories{
     }
 
     public function all(RequestInterface $request, ResponseInterface $response){
-    	$cat = \api\Models\Categories::first();
+    	$cat = \api\Models\Categories::get();
 
+        $response = JsonResponse::make($response, $cat);
+    }
+
+    public function single(RequestInterface $request, ResponseInterface $response, $args){
+
+    	$cat = \api\Models\Categories::where("id", $args['id'])->get();
         $response = JsonResponse::make($response, $cat);
     }
 }
