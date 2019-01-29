@@ -104,6 +104,7 @@ composer.phar
 # composer.lock
 
 # *.ini
+configuration.ini
 /src/vendor/
 /doc/api.doc/docs/
 .idea/inspectionProfiles/
