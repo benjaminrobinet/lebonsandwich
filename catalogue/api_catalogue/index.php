@@ -22,7 +22,8 @@ $app = new App($c);
 
 // JSON API Routes definitions
 $app->group('', function(){ // Only for group logic to add a middleware (https://www.slimframework.com/docs/v3/objects/router.html#route-groups)
-    $this->get('/categories', api\Controllers\Categories::class . ':all');
+    $this->get('/categories', api\Controllers\Categories::class . ":all");
+    $this->get('/categorie/{id}', api\Controllers\Categories::class . ":single");
 })->add(Responses\JsonHeaders::class);
 
 // Run app
