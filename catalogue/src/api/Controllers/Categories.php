@@ -3,6 +3,7 @@
 namespace api\Controllers;
 
 use api\Errors\JsonError;
+use api\Errors\JsonNotFound;
 use api\Responses\JsonResponse;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -56,11 +57,16 @@ class Categories{
 
         if(isset($body['nom']) && isset($body['description'])){
             $categorie = \api\Models\Categories::find($args['id']);
-            $categorie->nom = $body['nom'];
-            $categorie->description = $body['description'];
-            $categorie->save();
+            if($categorie){
+                $categorie->nom = $body['nom'];
+                $categorie->description = $body['description'];
+                $categorie->save();
 
-            $response = JsonResponse::make($response, [$categorie], 200);
+                $response = JsonResponse::make($response, [$categorie], 200);
+            } else {
+                $notFound = new JsonNotFound;
+                $response = $notFound($request, $response);
+            }
         } else {
             $response = JsonError::make($response, 'Bad request: Check your entity', 400);
         }
