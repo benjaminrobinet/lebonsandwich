@@ -2,6 +2,7 @@
 
 namespace api\Controllers;
 
+use api\Errors\JsonError;
 use api\Responses\JsonResponse;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -33,8 +34,20 @@ class Categories{
         $response = JsonResponse::make($response, $cat);
     }
 
-    public function add(RequestInterface $request, ResponseInterface $response, $body){
-        var_dump($body);
-        die();
+    public function add(RequestInterface $request, ResponseInterface $response){
+        $body = $request->getParsedBody();
+        if(isset($body['nom']) && isset($body['description'])){
+            $categorie = new \api\Models\Categories();
+            $categorie->nom = $body['nom'];
+            $categorie->description = $body['description'];
+            $categorie->save();
+
+            $response = $response->withAddedHeader('Location', $this->container->get('router')->pathFor('simple-categorie', ["id" => $categorie->id]));
+            $response = JsonResponse::make($response, [$categorie], 201);
+        } else {
+            $response = JsonError::make($response, 'Bad request: Check your entity', 400);
+        }
+
+        return $response;
     }
 }
