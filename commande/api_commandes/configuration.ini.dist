@@ -1,0 +1,10 @@
+[database]
+driver = "mysql"
+host = "db_commandes"
+port = 3306
+username = "commande_lbs"
+password = "commande_lbs"
+database = "commande_lbs"
+charset = "utf8"
+collation = "utf8_unicode_ci"
+prefix = ""
