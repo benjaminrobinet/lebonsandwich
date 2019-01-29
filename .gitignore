@@ -109,7 +109,7 @@ composer.phar
 .idea/inspectionProfiles/
 doc/internals/
 
-docker-compose\.yml
+#docker-compose\.yml
 
 /catalogue/src/vendor
 /commande/src/vendor
