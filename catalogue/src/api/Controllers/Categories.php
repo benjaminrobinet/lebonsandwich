@@ -50,4 +50,21 @@ class Categories{
 
         return $response;
     }
+
+    public function update(RequestInterface $request, ResponseInterface $response, $args){
+        $body = $request->getParsedBody();
+
+        if(isset($body['nom']) && isset($body['description'])){
+            $categorie = \api\Models\Categories::find($args['id']);
+            $categorie->nom = $body['nom'];
+            $categorie->description = $body['description'];
+            $categorie->save();
+
+            $response = JsonResponse::make($response, [$categorie], 200);
+        } else {
+            $response = JsonError::make($response, 'Bad request: Check your entity', 400);
+        }
+
+        return $response;
+    }
 }

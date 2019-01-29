@@ -25,6 +25,7 @@ $app->group('', function(){ // Only for group logic to add a middleware (https:/
     $this->get('/categories', api\Controllers\Categories::class . ":all");
     $this->get('/categorie/{id}', api\Controllers\Categories::class . ":single")->setName('simple-categorie');
     $this->post('/categorie', api\Controllers\Categories::class . ":add")->setName("add-categorie");
+    $this->put('/categorie/{id}', api\Controllers\Categories::class . ":update")->setName("update-categorie");
 })->add(Responses\JsonHeaders::class);
 
 // Run app
