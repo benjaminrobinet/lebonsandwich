@@ -22,7 +22,7 @@ class Categories{
     }
 
     public function all(RequestInterface $request, ResponseInterface $response){
-    	$cat = api\Models\Categories::get();
+    	$cat = \api\Models\Categories::first();
 
         $response = JsonResponse::make($response, $cat);
     }
