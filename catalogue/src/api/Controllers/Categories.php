@@ -26,7 +26,8 @@ class Categories{
     }
 
     public function all(RequestInterface $request, ResponseInterface $response){
-    	$cat = \api\Models\Categories::get();
+    	//Récupération des catégories
+        $cat = \api\Models\Categories::get();
 
         $response = CollectionResponse::make($response, ['categories' => $cat]);
 
@@ -34,6 +35,8 @@ class Categories{
     }
 
     public function single(RequestInterface $request, ResponseInterface $response, $args){
+        //Récupération d'une categorie
+    	$cat = \api\Models\Categories::where("id", $args['id'])->get();
 
     	$cat = \api\Models\Categories::find($args['id']);
         $response = ResourceResponse::make($response, ['categorie' => $cat]);

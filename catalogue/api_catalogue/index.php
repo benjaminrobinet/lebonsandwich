@@ -21,11 +21,18 @@ Errors\JsonErrorsDispatcher::dispatch($c);
 $app = new App($c);
 
 // JSON API Routes definitions
-$app->group('', function(){ // Only for group logic to add a middleware (https://www.slimframework.com/docs/v3/objects/router.html#route-groups)
+$app->group('', function(){
+   	//Afficher toute les categories
     $this->get('/categories', api\Controllers\Categories::class . ":all");
-    $this->get('/categorie/{id}', api\Controllers\Categories::class . ":single")->setName('simple-categorie');
-    $this->post('/categorie', api\Controllers\Categories::class . ":add")->setName("add-categorie");
-    $this->put('/categorie/{id}', api\Controllers\Categories::class . ":update")->setName("update-categorie");
+
+    //Afficher une seul categorie
+    $this->get('/categories/{id}', api\Controllers\Categories::class . ":single")->setName('simple-categorie');
+
+    //Ajouter une categorie
+    $this->post('/categories', api\Controllers\Categories::class . ":add")->setName("add-categorie");
+    
+    //Modifier une categorie
+    $this->put('/categories/{id}', api\Controllers\Categories::class . ":update")->setName("update-categorie");
 })->add(Responses\JsonHeaders::class);
 
 // Run app
