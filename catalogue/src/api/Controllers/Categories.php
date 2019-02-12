@@ -4,7 +4,9 @@ namespace api\Controllers;
 
 use api\Errors\JsonError;
 use api\Errors\JsonNotFound;
+use api\Responses\CollectionResponse;
 use api\Responses\JsonResponse;
+use api\Responses\ResourceResponse;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,13 +28,15 @@ class Categories{
     public function all(RequestInterface $request, ResponseInterface $response){
     	$cat = \api\Models\Categories::get();
 
-        $response = JsonResponse::make($response, $cat);
+        $response = CollectionResponse::make($response, ['categories' => $cat]);
+
+        return $response;
     }
 
     public function single(RequestInterface $request, ResponseInterface $response, $args){
 
-    	$cat = \api\Models\Categories::where("id", $args['id'])->get();
-        $response = JsonResponse::make($response, $cat);
+    	$cat = \api\Models\Categories::find($args['id']);
+        $response = ResourceResponse::make($response, ['categorie' => $cat]);
     }
 
     public function add(RequestInterface $request, ResponseInterface $response){
