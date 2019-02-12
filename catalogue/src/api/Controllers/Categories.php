@@ -30,16 +30,15 @@ class Categories{
         $cat = \api\Models\Categories::get();
 
         $response = CollectionResponse::make($response, ['categories' => $cat]);
-
         return $response;
     }
 
     public function single(RequestInterface $request, ResponseInterface $response, $args){
         //Récupération d'une categorie
-    	$cat = \api\Models\Categories::where("id", $args['id'])->get();
-
     	$cat = \api\Models\Categories::find($args['id']);
+
         $response = ResourceResponse::make($response, ['categorie' => $cat]);
+        return $response;
     }
 
     public function add(RequestInterface $request, ResponseInterface $response){
