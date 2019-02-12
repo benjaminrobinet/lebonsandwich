@@ -5,21 +5,16 @@ use Psr\Http\Message\ResponseInterface;
 
 class JsonResponse
 {
-    public static function make(ResponseInterface $response, $data ,$count, $pagination = null, $code = 200, $local = "fr-FR"){
-        
-		$resp = [
-			"type" => ($count > 1) ? "collection" : "resource",
-			"count" => $count,
-			"size" => ($count != count($data)) ? count($data) : null,
-			"locale" => $local,
-			"links" => $pagination,
-			"data" => $data
-		];
+    private static $response = [];
 
-		$resp = array_filter($resp);
+    public static function make(ResponseInterface $response, $data, $code = 200, $local = "fr-FR"){
+        self::$response = [
+            "locale" => $local,
+        ];
+        self::$response = array_merge(self::$response, $data);
 
         return $response->withStatus($code)
             ->withHeader('Content-Type', 'application/json')
-            ->write(json_encode($resp));
+            ->write(json_encode(self::$response));
     }
 }
