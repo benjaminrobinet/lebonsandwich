@@ -5,11 +5,11 @@ use Psr\Http\Message\ResponseInterface;
 
 class CollectionResponse
 {
-    public static function make(ResponseInterface $response, $data, $links = null, $code = 200, $local = "fr-FR"){
+    public static function make(ResponseInterface $response, $data, $count = null, $links = null, $code = 200, $local = "fr-FR"){
 
         $resp = [
             "type" => "collection",
-            "count" => array_values($data)[0]->count(),
+            "count" => $count !== null ? $count : array_values($data)[0]->count(),
             "size" => count(array_values($data)[0]),
         ];
 
