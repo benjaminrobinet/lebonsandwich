@@ -2,8 +2,10 @@
 
 namespace api\Controllers;
 
+use api\Errors\JsonNotFound;
 use api\Models\Commande;
 use api\Responses\CollectionResponse;
+use api\Responses\ResourceResponse;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -23,7 +25,15 @@ class Commandes{
     }
 
     public function single(RequestInterface $request, ResponseInterface $response, $args){
+        $commande = Commande::find($args['id']);
 
+        if(!$commande){
+            $notFound = new JsonNotFound;
+            return $notFound($request, $response);
+        }
+
+        $response = ResourceResponse::make($response, ['commande' => $commande]);
+        return $response;
     }
 
     public function all(RequestInterface $request, ResponseInterface $response){
@@ -37,14 +47,6 @@ class Commandes{
         if($status !== 'any'){
             $where['status'] = $status;
         }
-
-
-    	// if($request->getQueryParam("size") > 0){
-    	// 	$com = $com->paginate(intval($request->getQueryParam("size")));
-    	// }
-    	// else{
-    	// 	$com = $com->get();
-    	// }
 
         $commandes = Commande::where($where)->paginate($size, ['id', 'nom', 'created_at', 'livraison', 'status'], 'page', $current_page);
         $commandes->withPath($this->container->router->pathFor('commandes') . '?status=' . $status . '&size=' . $size);

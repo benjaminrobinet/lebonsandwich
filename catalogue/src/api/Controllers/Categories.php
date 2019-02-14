@@ -4,6 +4,7 @@ namespace api\Controllers;
 
 use api\Errors\JsonError;
 use api\Errors\JsonNotFound;
+use api\Models\Categorie;
 use api\Responses\CollectionResponse;
 use api\Responses\JsonResponse;
 use api\Responses\ResourceResponse;
@@ -27,7 +28,7 @@ class Categories{
 
     public function all(RequestInterface $request, ResponseInterface $response){
     	//Récupération des catégories
-        $cat = \api\Models\Categories::get();
+        $cat = Categorie::get();
 
         $response = CollectionResponse::make($response, ['categories' => $cat]);
         return $response;
@@ -35,16 +36,40 @@ class Categories{
 
     public function single(RequestInterface $request, ResponseInterface $response, $args){
         //Récupération d'une categorie
-    	$cat = \api\Models\Categories::find($args['id']);
+    	$cat = Categorie::find($args['id']);
 
-        $response = ResourceResponse::make($response, ['categorie' => $cat]);
+        if(!$cat){
+            $notFound = new JsonNotFound();
+            return $notFound($request, $response);
+        }
+
+    	$links = [
+    	    "sandwiches" => [
+    	        "href" => $this->container->router->pathFor('categorie-sandwiches', ['id' => $cat->id])
+            ],
+            "self" => [
+                "href" => $this->container->router->pathFor('simple-categorie', ['id' => $cat->id])
+            ]
+        ];
+
+        $response = ResourceResponse::make($response, ['categorie' => $cat], $links);
         return $response;
+    }
+
+    public function sandwiches(RequestInterface $request, ResponseInterface $response, $args){
+        $cat = Categories::find($args['id']);
+
+        if(!$cat){
+            $notFound = new JsonNotFound();
+            return $notFound($request, $response);
+
+        }
     }
 
     public function add(RequestInterface $request, ResponseInterface $response){
         $body = $request->getParsedBody();
         if(isset($body['nom']) && isset($body['description'])){
-            $categorie = new \api\Models\Categories();
+            $categorie = new Categorie();
             $categorie->nom = $body['nom'];
             $categorie->description = $body['description'];
             $categorie->save();
@@ -62,7 +87,7 @@ class Categories{
         $body = $request->getParsedBody();
 
         if(isset($body['nom']) && isset($body['description'])){
-            $categorie = \api\Models\Categories::find($args['id']);
+            $categorie = Categorie::find($args['id']);
             if($categorie){
                 $categorie->nom = $body['nom'];
                 $categorie->description = $body['description'];
