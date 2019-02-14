@@ -29,6 +29,7 @@ class Commandes{
     public function all(RequestInterface $request, ResponseInterface $response){
 
         $status = $request->getQueryParam('status', 'any');
+        $size = $request->getQueryParam('size', 10);
         $current_page = $request->getQueryParam('page', 1);
 
     	//Gestion des conditions
@@ -45,23 +46,28 @@ class Commandes{
     	// 	$com = $com->get();
     	// }
 
-        $commandes = Commande::where($where)->paginate(10, ['id', 'nom', 'created_at', 'livraison', 'status'], 'page', $current_page);
-        $commandes->withPath($this->container->router->pathFor('commandes') . '?status=' . $status);
+        $commandes = Commande::where($where)->paginate($size, ['id', 'nom', 'created_at', 'livraison', 'status'], 'page', $current_page);
+        $commandes->withPath($this->container->router->pathFor('commandes') . '?status=' . $status . '&size=' . $size);
 
         $result = [];
 
         foreach ($commandes as $commande){
-            $result[] = [
-                'commande' => $commande,
-                'links' => [
-                    'self' => [
-                        'href' => $this->container->router->pathFor('commande', ['id' => $commande->id])
-                    ]
+            $commande->links = [
+                'self' => [
+                    'href' => $this->container->router->pathFor('commande', ['id' => $commande->id])
                 ]
             ];
+            $result[] = $commande;
         }
 
-        $response = CollectionResponse::make($response, ['commandes' => $result], $commandes->total());
+        $links = [
+            'next' => $commandes->nextPageUrl(),
+            'prev' => $commandes->previousPageUrl(),
+            'last' => $commandes->url($commandes->lastPage()),
+            'first' => $commandes->url(1),
+        ];
+
+        $response = CollectionResponse::make($response, ['commandes' => $result], $commandes->total(), $links);
         return $response;
     }
 }
