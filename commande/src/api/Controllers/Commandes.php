@@ -2,7 +2,7 @@
 
 namespace api\Controllers;
 
-use api\Responses\JsonResponse;
+use api\Models\Commande;
 use api\Responses\CollectionResponse;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -23,13 +23,15 @@ class Commandes{
     }
 
     public function all(RequestInterface $request, ResponseInterface $response){
-    	
-    	$com = \api\Models\Commande::paginate(10);
+
+        $status = $request->getQueryParam('page', 1);
+        $current_page = $request->getQueryParam('page', 1);
 
     	//Gestion des conditions
-    	// if($request->getQueryParam("s") >= 0){
-    	// 	$com = $com->where('status', $request->getQueryParam("s"));
-    	// }
+        $where = [];
+        $where['status'] = $request->getQueryParam('status', '*');
+
+
 
     	// if($request->getQueryParam("size") > 0){
     	// 	$com = $com->paginate(intval($request->getQueryParam("size")));
@@ -38,10 +40,12 @@ class Commandes{
     	// 	$com = $com->get();
     	// }
 
-    	foreach ($com as $item) 
-    	{
-    	 	var_dump($item);
-    	}
+        $commandes = Commande::where($where)->paginate(10, ['*'], 'page', $current_page);
+        $commandes->withPath($this->container->router->pathFor('commandes'));
+
+        var_dump($commandes->toArray());
+
+    	die();
 
         //$response = CollectionResponse::make($response, ['commandes' => $com]);
         //return $response;
