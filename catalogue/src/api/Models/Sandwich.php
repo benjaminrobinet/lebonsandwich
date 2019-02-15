@@ -13,6 +13,6 @@ class Sandwich extends Model
 		$timestamps = false; 
 
 	public function categorie(){
-        return $this->belongsToMany('api\Models\Categories', 'sand2cat', 'sand_id', 'cat_id');
+        return $this->belongsToMany('api\Models\Categorie', 'sand2cat', 'sand_id', 'cat_id');
     }
 }

@@ -28,6 +28,9 @@ $app->group('', function(){
     //Afficher une seul categorie
     $this->get('/categories/{id}', api\Controllers\Categories::class . ":single")->setName('simple-categorie');
 
+    // Sandwiches of categorie
+    $this->get('/categories/{id}/sandwiches', api\Controllers\Categories::class . ":sandwiches")->setName('categorie-sandwiches');
+
     //Ajouter une categorie
     $this->post('/categories', api\Controllers\Categories::class . ":add")->setName("add-categorie");
     
