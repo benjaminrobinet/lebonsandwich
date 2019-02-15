@@ -33,6 +33,13 @@ $app->group('', function(){
     
     //Modifier une categorie
     $this->put('/categories/{id}', api\Controllers\Categories::class . ":update")->setName("update-categorie");
+
+    //Afficher les sandwich d'une categorie
+    $this->get("/categories/{id}/sandwiches", api\Controllers\Categories::class . ":get_sand")->setName("get-sandwiches-categories");
+
+    //Afficher un sandwich
+    $this->get("/sandwiches/{id}", api\Controllers\Sandwiches::class . ":single")->setName("single_sandwich");
+
 })->add(Responses\JsonHeaders::class);
 
 // Run app

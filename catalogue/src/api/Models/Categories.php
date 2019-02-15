@@ -11,6 +11,9 @@ class Categories extends Model{
 		$timestamps = false; 
 
 	public function sandwich(){
-        return $this->belongsToMany('api\Models\Sandwich', 'sand2cat', 'cat_id', 'sand_id');
+        return $this->belongsToMany("api\Models\Sandwich", 
+                                    "sand2cat", 
+                                    "cat_id", 
+                                    "sand_id");
     }
 }
