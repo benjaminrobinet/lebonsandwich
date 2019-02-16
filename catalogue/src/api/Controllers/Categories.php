@@ -8,6 +8,7 @@ use api\Models\Categorie;
 use api\Responses\CollectionResponse;
 use api\Responses\JsonResponse;
 use api\Responses\ResourceResponse;
+use Illuminate\Database\Eloquent\Collection;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -57,13 +58,39 @@ class Categories{
     }
 
     public function sandwiches(RequestInterface $request, ResponseInterface $response, $args){
-        $cat = Categories::find($args['id']);
+        $cat = Categorie::find($args['id']);
 
         if(!$cat){
             $notFound = new JsonNotFound();
             return $notFound($request, $response);
-
         }
+
+        $size = $request->getQueryParam('size', 10);
+        $current_page = $request->getQueryParam('page', 1);
+
+        $sandwiches = $cat->sandwiches()->paginate($size, ['*'], 'page', $current_page);
+        $sandwiches->withPath($this->container->router->pathFor('categorie-sandwiches') . '?size=' . $size);
+
+        $result = [];
+
+        foreach ($sandwiches as $sandwich){
+            $sandwich->links = [
+                'self' => [
+                    'href' => $this->container->router->pathFor('single-sandwich', ['id' => $sandwich->id])
+                ]
+            ];
+            $result[] = $sandwich;
+        }
+
+        $links = [
+            'next' => $sandwiches->nextPageUrl(),
+            'prev' => $sandwiches->previousPageUrl(),
+            'last' => $sandwiches->url($sandwiches->lastPage()),
+            'first' => $sandwiches->url(1),
+        ];
+
+        $response = CollectionResponse::make($response, ['sandwiches' => $sandwiches], $links);
+        return $response;
     }
 
     public function add(RequestInterface $request, ResponseInterface $response){

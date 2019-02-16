@@ -36,6 +36,9 @@ $app->group('', function(){
     
     //Modifier une categorie
     $this->put('/categories/{id}', api\Controllers\Categories::class . ":update")->setName("update-categorie");
+
+    // GET un sandwich
+    $this->get('/sandwiches/{id}', api\Controllers\Sandwiches::class . ":single")->setName("single-sandwich");
 })->add(Responses\JsonHeaders::class);
 
 // Run app

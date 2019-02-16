@@ -10,7 +10,7 @@ class Categorie extends Model{
 	public 
 		$timestamps = false; 
 
-	public function sandwich(){
+	public function sandwiches(){
         return $this->belongsToMany('api\Models\Sandwich', 'sand2cat', 'cat_id', 'sand_id');
     }
 }

@@ -2,7 +2,9 @@
 namespace api\Models;
 
 
-class Sandwich
+use Illuminate\Database\Eloquent\Model;
+
+class Sandwich extends Model
 {
     protected
 		$table = "sandwich", //Nom de la table
