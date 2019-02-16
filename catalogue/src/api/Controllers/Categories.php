@@ -69,7 +69,7 @@ class Categories{
         $current_page = $request->getQueryParam('page', 1);
 
         $sandwiches = $cat->sandwiches()->paginate($size, ['*'], 'page', $current_page);
-        $sandwiches->withPath($this->container->router->pathFor('categorie-sandwiches') . '?size=' . $size);
+        $sandwiches->withPath($this->container->router->pathFor('categorie-sandwiches', ['id' => $cat->id]) . '?size=' . $size);
 
         $result = [];
 
@@ -89,7 +89,7 @@ class Categories{
             'first' => $sandwiches->url(1),
         ];
 
-        $response = CollectionResponse::make($response, ['sandwiches' => $sandwiches], $links);
+        $response = CollectionResponse::make($response, ['sandwiches' => $result], $sandwiches->total(), $links);
         return $response;
     }
 

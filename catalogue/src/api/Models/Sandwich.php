@@ -6,7 +6,7 @@ class Sandwich extends Model
 {
     protected
 		$table = "sandwich", //Nom de la table
-		$primaryKey  = "id", //Nom de la clé primaire
+		$primaryKey  = "id"; //Nom de la clé primaire
 
 
 	public 
