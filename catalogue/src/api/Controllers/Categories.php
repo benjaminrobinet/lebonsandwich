@@ -131,4 +131,29 @@ class Categories{
 
         return $response;
     }
+
+    public function get_sand(RequestInterface $request, ResponseInterface $response, $args){
+        $cat = \api\Models\Categories::find($args['id']);
+
+        if(!$cat){
+            $notFound = new JsonNotFound;
+            return $notFound($request, $response);
+        }
+
+        $sand = $cat->sandwich()->get();
+        
+        $sandwiches = [];
+        foreach ($sand as $sandwich) {
+            $sandwich->link = [
+                'self' => [
+                    'href' => $this->container->router->pathFor('single_sandwich', ['id' => $sandwich->id])
+                ]
+            ];
+
+            $sandwiches[] = $sandwich;
+        }
+
+        $response = CollectionResponse::make($response, ['sandwiches'=>$sandwiches], $sand->count());
+        return $response;
+    }
 }
