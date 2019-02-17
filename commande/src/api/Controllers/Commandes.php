@@ -25,12 +25,15 @@ class Commandes{
     }
 
     public function single(RequestInterface $request, ResponseInterface $response, $args){
-        $commande = Commande::find($args['id']);
+        $commande = Commande::with('items')->find($args['id']);
 
         if(!$commande){
             $notFound = new JsonNotFound;
             return $notFound($request, $response);
         }
+
+//        var_dump($commande->items);
+//        die();
 
         $response = ResourceResponse::make($response, ['commande' => $commande]);
         return $response;
