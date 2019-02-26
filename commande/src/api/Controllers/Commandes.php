@@ -2,13 +2,16 @@
 
 namespace api\Controllers;
 
+use api\Errors\JsonError;
 use api\Errors\JsonNotFound;
 use api\Models\Commande;
 use api\Responses\CollectionResponse;
 use api\Responses\ResourceResponse;
+use DateTime;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Created by PhpStorm.
@@ -32,10 +35,12 @@ class Commandes{
             return $notFound($request, $response);
         }
 
-//        var_dump($commande->items);
-//        die();
+        $links = [
+            "self" => $this->container->router->pathFor('commande', ['id' => $commande->id]),
+            "items" => $this->container->router->pathFor('commande-items', ['id' => $commande->id]),
+        ];
 
-        $response = ResourceResponse::make($response, ['commande' => $commande]);
+        $response = ResourceResponse::make($response, ['commande' => $commande], $links);
         return $response;
     }
 
@@ -74,5 +79,40 @@ class Commandes{
 
         $response = CollectionResponse::make($response, ['commandes' => $result], $commandes->total(), $links);
         return $response;
+    }
+
+    public function create(RequestInterface $request, ResponseInterface $response){
+        $body = $request->getParsedBody();
+
+        if(!empty($body['nom'])
+        && !empty($body['mail'])
+        && !empty($body['livraison'])){
+            $commande = new Commande();
+
+            try {
+                $id = $uuid4 = Uuid::uuid4();
+            } catch (\Exception $e) {
+                die($e->getMessage());
+            }
+            $token = openssl_random_pseudo_bytes(32);
+            $token = bin2hex($token);
+
+            $commande->id = $id;
+            $commande->token = $token;
+            $commande->nom = $body['nom'];
+            $commande->mail = $body['mail'];
+            $commande->livraison = $body['livraison'];
+            $commande->montant = 0;
+
+            $commande->save();
+
+            $response = $response->withAddedHeader('Location', $this->container->router->pathFor('commande', ['id' => $commande->id]));
+            $response = ResourceResponse::make($response, ['commande' => $commande], null, 201);
+            return $response;
+        } else {
+            $jsonError = new JsonError();
+            $jsonError->make($response, 'Bad Request', 400);
+        }
+
     }
 }

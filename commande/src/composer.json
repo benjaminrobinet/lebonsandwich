@@ -3,7 +3,9 @@
   "require" : {
     "slim/slim": "^3.0",
     "illuminate/database": "^5.7",
-    "illuminate/pagination": "^5.7"
+    "illuminate/pagination": "^5.7",
+    "ramsey/uuid": "^3.8",
+    "ext-openssl": "^7.1"
   },
 
   "autoload": {

@@ -8,6 +8,8 @@ class Commande extends Model{
 		$primaryKey  = "id", //Nom de la clé primaire
 		$casts = ['id' => 'string']; //Caster la valeur de la clé primaire en string
 
+    public $incrementing = false;
+
 	public function items(){
 	    return $this->hasMany('api\Models\Item', 'command_id');
     }
