@@ -5,7 +5,8 @@
     "illuminate/database": "^5.7",
     "illuminate/pagination": "^5.7",
     "ramsey/uuid": "^3.8",
-    "ext-openssl": "^7.1"
+    "ext-openssl": "^7.1",
+    "guzzlehttp/guzzle": "^6.3"
   },
 
   "autoload": {
