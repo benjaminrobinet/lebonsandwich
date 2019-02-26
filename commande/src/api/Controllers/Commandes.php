@@ -12,6 +12,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Ramsey\Uuid\Uuid;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 
 /**
  * Created by PhpStorm.
@@ -97,6 +99,7 @@ class Commandes{
             $token = openssl_random_pseudo_bytes(32);
             $token = bin2hex($token);
 
+            //Création de la commande
             $commande->id = $id;
             $commande->token = $token;
             $commande->nom = $body['nom'];
@@ -104,6 +107,22 @@ class Commandes{
             $commande->livraison = $body['livraison'];
             $commande->montant = 0;
 
+            $catalogue_service = $this->container->get('catalogue');
+
+            //S'il y a des items
+            if(!empty($body["items"])){
+                foreach ($body["items"] as $item){
+                    
+                }
+            }
+
+            $req = new Request('GET', "/sandwiches/1", ["Content-Type"=>"application/json"]);
+
+            var_dump($test); die();
+            $test = $catalogue_service->send($req);
+            var_dump($test->getBody()); die();
+
+            //Sauvegarder la commande
             $commande->save();
 
             $response = $response->withAddedHeader('Location', $this->container->router->pathFor('commande', ['id' => $commande->id]));

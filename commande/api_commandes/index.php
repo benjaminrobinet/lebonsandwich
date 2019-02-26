@@ -19,6 +19,7 @@ Database::init($conf['database']);
 
 $c = new Container($configuration);
 Errors\JsonErrorsDispatcher::dispatch($c);
+scripts\RegisterServices::register($c, $conf["services"]);
 $app = new App($c);
 
 // JSON API Routes definitions

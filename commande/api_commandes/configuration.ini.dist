@@ -8,3 +8,6 @@ database = "commandes_lbs"
 charset = "utf8"
 collation = "utf8_unicode_ci"
 prefix = ""
+
+[services]
+catalogue_host = "http://api.catalogue.local:10080" 
