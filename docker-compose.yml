@@ -67,6 +67,7 @@ services:
       - lbs_network
     links:
       - mysql_commandes:db
+      - api.catalogue:api_catalogue
 
 #############################
 # mysql catalogue  + adminer
