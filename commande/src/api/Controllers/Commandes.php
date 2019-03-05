@@ -5,9 +5,11 @@ namespace api\Controllers;
 use api\Errors\JsonError;
 use api\Errors\JsonNotFound;
 use api\Models\Commande;
+use api\Models\Item;
 use api\Responses\CollectionResponse;
 use api\Responses\ResourceResponse;
 use DateTime;
+use GuzzleHttp\Psr7\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -105,28 +107,52 @@ class Commandes{
             $commande->nom = $body['nom'];
             $commande->mail = $body['mail'];
             $commande->livraison = $body['livraison'];
-            $commande->montant = 0;
+//            $commande->montant = 0;
 
             $catalogue_service = $this->container->get('catalogue');
+
+            $items = [];
+            $montant = 0;
 
             //S'il y a des items
             if(!empty($body["items"])){
                 foreach ($body["items"] as $item){
-                    
+                    /** @var Response $res */
+                    $res = $catalogue_service->request('GET', $item['uri']);
+                    $resBody = $res->getBody();
+                    $resBody = json_decode($resBody, true);
+                    if($res->getStatusCode() === 200){
+                        // Create new item
+                        $itemM = new Item();
+
+                        // Define item
+                        $itemM->uri = $item['uri'];
+                        $itemM->libelle = $resBody['sandwich']['nom'];
+                        $itemM->tarif = $resBody['sandwich']['prix'];
+                        $itemM->quantite = $item['q'];
+
+                        $items[] = $itemM;
+
+                        $montant += $resBody['sandwich']['prix'] * $item['q'];
+                    }
                 }
             }
 
-            $req = new Request('GET', "/sandwiches/1", ["Content-Type"=>"application/json"]);
-
-            var_dump($test); die();
-            $test = $catalogue_service->send($req);
-            var_dump($test->getBody()); die();
+            $commande->montant = $montant;
+            $commande->items()->saveMany($items);
 
             //Sauvegarder la commande
             $commande->save();
 
+            $commande = Commande::with('items')->find($commande->id);
+
+            $links = [
+                'self' => $this->container->router->pathFor('commande', ['id' => $commande->id]),
+                'items' => $this->container->router->pathFor('commande-items', ['id' => $commande->id])
+            ];
+
             $response = $response->withAddedHeader('Location', $this->container->router->pathFor('commande', ['id' => $commande->id]));
-            $response = ResourceResponse::make($response, ['commande' => $commande], null, 201);
+            $response = ResourceResponse::make($response, ['commande' => $commande], $links, 201);
             return $response;
         } else {
             $jsonError = new JsonError();

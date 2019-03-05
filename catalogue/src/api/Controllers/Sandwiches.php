@@ -37,24 +37,21 @@ class Sandwiches{
     }
 
     public function single(RequestInterface $request, ResponseInterface $response, $args){
-        //Récupération d'une categorie
-    	$cat = Categorie::find($args['id']);
+        //Récupération d'un sandwich
+    	$sand = Sandwich::find($args['id']);
 
-        if(!$cat){
+        if(!$sand){
             $notFound = new JsonNotFound();
             return $notFound($request, $response);
         }
 
     	$links = [
-    	    "sandwiches" => [
-    	        "href" => $this->container->router->pathFor('categorie-sandwiches', ['id' => $cat->id])
-            ],
             "self" => [
-                "href" => $this->container->router->pathFor('simple-categorie', ['id' => $cat->id])
+                "href" => $this->container->router->pathFor('single-sandwich', ['id' => $sand->id])
             ]
         ];
 
-        $response = ResourceResponse::make($response, ['categorie' => $cat], $links);
+        $response = ResourceResponse::make($response, ['sandwich' => $sand], $links);
         return $response;
     }
 

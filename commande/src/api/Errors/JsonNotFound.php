@@ -15,4 +15,14 @@ class JsonNotFound
 
         return $response;
     }
+
+    public static function make(ResponseInterface $response){
+        $response = JsonError::make(
+            $response,
+            "Not Found",
+            404
+        );
+
+        return $response;
+    }
 }

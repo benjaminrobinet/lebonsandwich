@@ -21,6 +21,6 @@ class Item extends Model
         $timestamps = false;
 
     public function commande(){
-        return $this->hasOne('api\Models\Commande');
+        return $this->belongsTo('api\Models\Commande', 'command_id');
     }
 }

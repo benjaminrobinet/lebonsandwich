@@ -21,8 +21,8 @@ class AuthorizationToken
     {
 
         $token = false;
-        if(!empty($response->getHeader('X-lbs-token'))){
-            $token = $response->getHeader('X-lbs-token');
+        if(!empty($request->getHeader('X-lbs-token'))){
+            $token = $request->getHeader('X-lbs-token')[0];
         } else if(!empty($request->getQueryParam('token'))){
             $token = $request->getQueryParam('token');
         }
@@ -35,12 +35,11 @@ class AuthorizationToken
         $commande = Commande::find($commande_id);
 
         if(!$commande){
-            $notFound = new JsonNotFound();
-            $response = $notFound($request, $response);
+            $response = JsonNotFound::make($response);
             return $response;
         }
 
-        if($commande->token == $token){
+        if($commande->token === $token){
             return $next($request, $response);
         } else {
             return JsonError::make($response, 'Unauthorized: Bad token for specified command.', 401);
