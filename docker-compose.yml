@@ -36,8 +36,8 @@ services:
     environment:
       - VHOST_HOSTNAME=api.catalogue.local
       - VHOST_DOCROOT=/var/www/api
-      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
-      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
     ports:
       - "10080:80"
       - "10443:443"
@@ -54,8 +54,8 @@ services:
     environment:
       - VHOST_HOSTNAME=api.commandes.local
       - VHOST_DOCROOT=/var/www/api
-      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
-      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
     ports:
       - "10090:80"
       - "10453:443"
