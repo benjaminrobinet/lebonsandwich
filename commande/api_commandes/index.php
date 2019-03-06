@@ -30,6 +30,7 @@ $app->group('', function() use($app){ // Only for group logic to add a middlewar
         $this->get('/commandes/{id}/items', api\Controllers\Commandes::class . ":items")->setName('commande-items');
     })->add(Middlewares\AuthorizationToken::class); // Middleware needed token
     $this->post('/commandes', api\Controllers\Commandes::class . ":create")->setName('create-commande');
+    $this->post('/clients/:id/auth', api\Controllers\Client::class . ':auth')->setName('client-auth');
 })->add(Responses\JsonHeaders::class);
 
 // Run app
