@@ -36,4 +36,12 @@ CREATE TABLE `item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- 2018-10-29 10:10:29
+DROP TABLE IF EXISTS `client`;
+CREATE TABLE `client` (
+  `id` varchar(128) NOT NULL,
+  `fullname` varchar(128) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 2018-03-12 20:04:00

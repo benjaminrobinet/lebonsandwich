@@ -24,13 +24,26 @@ $app = new App($c);
 
 // JSON API Routes definitions
 $app->group('', function() use($app){ // Only for group logic to add a middleware (https://www.slimframework.com/docs/v3/objects/router.html#route-groups)
+    //Afficher toutes les commandes
     $this->get('/commandes', api\Controllers\Commandes::class . ":all")->setName('commandes');
+
+    //Routes ayant besoin d'un token
     $app->group('', function (){
+        //Afficher une commande
         $this->get('/commandes/{id}', api\Controllers\Commandes::class . ":single")->setName('commande');
+        
+        //Afficher les items d'une commande
         $this->get('/commandes/{id}/items', api\Controllers\Commandes::class . ":items")->setName('commande-items');
     })->add(Middlewares\AuthorizationToken::class); // Middleware needed token
+    
+    //Créer une commande
     $this->post('/commandes', api\Controllers\Commandes::class . ":create")->setName('create-commande');
+
+    //Connexion d'un utilisateur
     $this->post('/clients/:id/auth', api\Controllers\Client::class . ':auth')->setName('client-auth');
+
+    //Créer un utilisateur
+    $this->post('/clients', api\Controllers\Client::class . ':create')->setName('create-client');
 })->add(Responses\JsonHeaders::class);
 
 // Run app
