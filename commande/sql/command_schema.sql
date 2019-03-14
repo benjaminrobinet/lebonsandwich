@@ -40,6 +40,9 @@ DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
   `id` varchar(128) NOT NULL,
   `fullname` varchar(128) NOT NULL,
+  `username` varchar(128) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `purshase_cumul` double DEFAULT 0.00,
   `created_at` datetime NOT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

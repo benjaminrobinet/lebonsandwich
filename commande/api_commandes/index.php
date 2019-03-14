@@ -24,6 +24,7 @@ $app = new App($c);
 
 // JSON API Routes definitions
 $app->group('', function() use($app){ // Only for group logic to add a middleware (https://www.slimframework.com/docs/v3/objects/router.html#route-groups)
+
     //Afficher toutes les commandes
     $this->get('/commandes', api\Controllers\Commandes::class . ":all")->setName('commandes');
 
@@ -39,11 +40,21 @@ $app->group('', function() use($app){ // Only for group logic to add a middlewar
     //Créer une commande
     $this->post('/commandes', api\Controllers\Commandes::class . ":create")->setName('create-commande');
 
-    //Connexion d'un utilisateur
-    $this->post('/clients/:id/auth', api\Controllers\Client::class . ':auth')->setName('client-auth');
-
-    //Créer un utilisateur
+    //Créer un client
     $this->post('/clients', api\Controllers\Client::class . ':create')->setName('create-client');
+
+    //Route ayant besoin d'un Authorization Header
+    $app->group("", function(){
+        //Connexion d'un client
+        $this->post("/clients/{id}/auth", api\Controllers\Client::class. ':auth')->setName("client-auth");
+
+        //Infos d'un client
+        $this->get("/clients/{id}", api\Controllers\Client::class. ':single')->setName('info-client');
+    })->add(Middlewares\Authorization::class);
+
+    //Historique des commandes d'un client
+    $this->get("/clients/{id}/commandes", api\Controllers\Client::class. ':commandes')->setName("command-client");
+
 })->add(Responses\JsonHeaders::class);
 
 // Run app
