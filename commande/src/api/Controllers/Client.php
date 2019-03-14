@@ -65,31 +65,38 @@
 	        $body = $request->getParsedBody();
 
 	        //Création d'un nouveau client
-	        if(!empty($body["fullname"]) && !empty($body["username"]) && !empty($body["password"])){
+	        if(!empty($body["fullname"]) && !empty($body["username"]) && !empty($body["password"]) && !empty($body["email"])){
 
 	        	//Si le username est déjà utilisé
-	        	if(!Clients::where("fullname", $body["fullname"])){
-	        		//ID du nouveau client
-		        	$id_client = Uuid::uuid4();
+	        	if(!Clients::where("fullname", $body["fullname"])->first()){
+	        		if(filter_var($body["email"], FILTER_VALIDATE_EMAIL)){
+	        			//ID du nouveau client
+			        	$id_client = Uuid::uuid4();
 
-		        	//Création d'une nouvelle instance de "Client"
-		        	$new_client = new Clients;
-		        	$new_client->id = $id_client;
-		        	$new_client->fullname = $body["fullname"];
-		        	$new_client->username = $body["username"];
-		        	$new_client->password = password_hash($body["password"], PASSWORD_DEFAULT);
-		        	$new_client->save();
+			        	//Création d'une nouvelle instance de "Client"
+			        	$new_client = new Clients;
+			        	$new_client->id = $id_client;
+			        	$new_client->fullname = $body["fullname"];
+			        	$new_client->username = $body["username"];
+			        	$new_client->password = password_hash($body["password"], PASSWORD_DEFAULT);
+			        	$new_client->email = $body["email"];
+			        	$new_client->save();
 
-		        	$client = [
-		        		"id"=>$id_client,
-		        		"fullname"=> $body["fullname"]
-		        	];
+			        	$client = [
+			        		"id"=>$id_client,
+			        		"fullname"=> $body["fullname"],
+			        		"email"=>$body["email"]
+			        	];
 
-		        	$res = JsonResponse::make($response, ['client' => $client]);
-	        		return $res;
+			        	$res = JsonResponse::make($response, ['client' => $client], 201);
+		        		return $res;
+	        		}else{
+	        			$jsonError = new JsonError();
+            			$jsonError->make($response, 'Bad Request: Invalid e-mail', 400);
+	        		}
 	        	}else{
 	        		$jsonError = new JsonError();
-            		$jsonError->make($response, 'Client already exist', 400);
+            		$jsonError->make($response, 'Bad Request: Client already exist', 400);
 	        	}
 	        }else{
 	        	$jsonError = new JsonError();
@@ -103,6 +110,7 @@
     		$client = [
 	    		"fullname"=>$current_user->fullname,
 	    		"username"=>$current_user->username,
+	    		"email"=>$current_user->email,
 	    		"sold"=>($current_user->purshase_cumul)*0.05
 	    	];
 
@@ -111,7 +119,10 @@
 	    }
 
 	    public function commandes(RequestInterface $request, ResponseInterface $response, $args){
-	    	
+    		//Récuperer les commandes d'un utilisateur
+    		$commandes = Commande::where("client_id", $args["id"])->get();
+
+    		
 	    }
 	}
 ?>

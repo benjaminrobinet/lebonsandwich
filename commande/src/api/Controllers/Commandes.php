@@ -6,6 +6,7 @@ use api\Errors\JsonError;
 use api\Errors\JsonNotFound;
 use api\Models\Commande;
 use api\Models\Item;
+use api\Models\Clients;
 use api\Responses\CollectionResponse;
 use api\Responses\ResourceResponse;
 use DateTime;
@@ -87,77 +88,83 @@ class Commandes{
 
     public function create(RequestInterface $request, ResponseInterface $response){
         $body = $request->getParsedBody();
+        $commande = new Commande();
 
-        if(!empty($body['nom'])
-        && !empty($body['mail'])
-        && !empty($body['livraison'])){
-            $commande = new Commande();
+        //Si le client passe son ID
+        if(!empty($body["client_id"])){
+            $current_client_id = Clients::find($body["client_id"]);
 
-            try {
-                $id = $uuid4 = Uuid::uuid4();
-            } catch (\Exception $e) {
-                die($e->getMessage());
+            if($current_client_id){
+                $commande->client_id = $body["client_id"];
+                $commande->nom = $current_client_id->fullname;
+                $commande->mail = $current_client_id->email;
+            }else{
+                return JsonError::make($response, 'Bad Request: Client isn\'t exist', 400);
             }
-            $token = openssl_random_pseudo_bytes(32);
-            $token = bin2hex($token);
-
-            //Création de la commande
-            $commande->id = $id;
-            $commande->token = $token;
+        //S'il passe son nom et prénom
+        }else if(!empty($body['nom']) && !empty($body['mail']) && !empty($body['livraison'])){
             $commande->nom = $body['nom'];
             $commande->mail = $body['mail'];
-            $commande->livraison = $body['livraison'];
-//            $commande->montant = 0;
-
-            $catalogue_service = $this->container->get('catalogue');
-
-            $items = [];
-            $montant = 0;
-
-            //S'il y a des items
-            if(!empty($body["items"])){
-                foreach ($body["items"] as $item){
-                    /** @var Response $res */
-                    $res = $catalogue_service->request('GET', $item['uri']);
-                    $resBody = $res->getBody();
-                    $resBody = json_decode($resBody, true);
-                    if($res->getStatusCode() === 200){
-                        // Create new item
-                        $itemM = new Item();
-
-                        // Define item
-                        $itemM->uri = $item['uri'];
-                        $itemM->libelle = $resBody['sandwich']['nom'];
-                        $itemM->tarif = $resBody['sandwich']['prix'];
-                        $itemM->quantite = $item['q'];
-
-                        $items[] = $itemM;
-
-                        $montant += $resBody['sandwich']['prix'] * $item['q'];
-                    }
-                }
-            }
-
-            $commande->montant = $montant;
-            $commande->items()->saveMany($items);
-
-            //Sauvegarder la commande
-            $commande->save();
-
-            $commande = Commande::with('items')->find($commande->id);
-
-            $links = [
-                'self' => $this->container->router->pathFor('commande', ['id' => $commande->id]),
-                'items' => $this->container->router->pathFor('commande-items', ['id' => $commande->id])
-            ];
-
-            $response = $response->withAddedHeader('Location', $this->container->router->pathFor('commande', ['id' => $commande->id]));
-            $response = ResourceResponse::make($response, ['commande' => $commande], $links, 201);
-            return $response;
         } else {
             $jsonError = new JsonError();
             $jsonError->make($response, 'Bad Request', 400);
         }
 
+        //Création d'un ID de commande
+        $id = $uuid4 = Uuid::uuid4();
+          
+        //Token de la commande  
+        $token = openssl_random_pseudo_bytes(32);
+        $token = bin2hex($token);
+
+        //Création de la commande
+        $commande->id = $id;
+        $commande->token = $token;
+        $commande->livraison = $body['livraison'];
+        $catalogue_service = $this->container->get('catalogue');
+
+        $items = [];
+        $montant = 0;
+
+        //S'il y a des items
+        if(!empty($body["items"])){
+            foreach ($body["items"] as $item){
+                /** @var Response $res */
+                $res = $catalogue_service->request('GET', $item['uri']);
+                $resBody = $res->getBody();
+                $resBody = json_decode($resBody, true);
+                if($res->getStatusCode() === 200){
+                    // Create new item
+                    $itemM = new Item();
+
+                    // Define item
+                    $itemM->uri = $item['uri'];
+                    $itemM->libelle = $resBody['sandwich']['nom'];
+                    $itemM->tarif = $resBody['sandwich']['prix'];
+                    $itemM->quantite = $item['q'];
+
+                    $items[] = $itemM;
+
+                    $montant += $resBody['sandwich']['prix'] * $item['q'];
+                }
+            }
+        }
+
+        $commande->montant = $montant;
+        $commande->items()->saveMany($items);
+
+        //Sauvegarder la commande
+        $commande->save();
+
+        $commande = Commande::with('items')->find($commande->id);
+
+        $links = [
+            'self' => $this->container->router->pathFor('commande', ['id' => $commande->id]),
+            'items' => $this->container->router->pathFor('commande-items', ['id' => $commande->id])
+        ];
+
+        $response = $response->withAddedHeader('Location', $this->container->router->pathFor('commande', ['id' => $commande->id]));
+        $response = ResourceResponse::make($response, ['commande' => $commande], $links, 201);
+        return $response;
     }
 }
