@@ -23,7 +23,7 @@ Une 3ème application permet au staff point de vente de gérer le catalogue de p
 
 ## Setup
 	
-	$ docker-compose up --no-start
+	$ docker-compose up
 	
 ## Catalogue
 	$ cd catalogue/src
