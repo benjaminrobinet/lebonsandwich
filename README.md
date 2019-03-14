@@ -23,19 +23,22 @@ Une 3ème application permet au staff point de vente de gérer le catalogue de p
 
 ## Setup
 	
-	$ docker-compose up
+	$ docker-compose up --no-start # Create the containers
+	$ docker-compose start # Start the containers
 	
 ## Catalogue
+	$ docker exec -it {catalogue_ctid} /bin/bash
 	$ cd catalogue/src
 	$ composer install
 
-Renomer le fichier dans **catalogue/api_catalogue/configuration.ini.dist** par **configuration.ini**
+Renommer le fichier **catalogue/api_catalogue/configuration.ini.dist** par **configuration.ini**
 
 ##  Commandes
+	$ docker exec -it {commandes_ctid} /bin/bash
 	$ cd commandes/src
 	$ composer install
 
-Renomer le fichier dans **commande/api_commande/configuration.ini.dist** par **configuration.ini**
+Renommer le fichier **commande/api_commande/configuration.ini.dist** par **configuration.ini**
 
 
 ## Routes
